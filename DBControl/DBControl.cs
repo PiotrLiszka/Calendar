@@ -1,10 +1,21 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Data.SQLite;
 using static System.Console;
 namespace DBControl;
 
 public class DBControlClass
 {
+
+   private static void Test ()
+   {
+      var sqlite_conn = CreateConnection();
+      DBControlClass.AddToDB(new DateTime(2024, 04, 15, 13, 22, 11), "Mama miała placek", 3,sqlite_conn);        // TESTING
+      DBControlClass.AddToDB(new DateTime(2024, 04, 17, 14, 22, 11), "Mama miała placek2", 1,sqlite_conn); 
+      DBControlClass.AddToDB(new DateTime(2024, 04, 02, 15, 22, 11), "Mama miała placek3", 2,sqlite_conn);
+      DBControlClass.AddToDB(new DateTime(2024, 04, 02, 15, 22, 11), "Mama miała placek3", 2,sqlite_conn);
+      DBControlClass.AddToDB(new DateTime(2024, 04, 07, 15, 22, 11), "Mama miała placek3", 2,sqlite_conn);
+   }
 
    public static SQLiteConnection CreateConnection()
    {

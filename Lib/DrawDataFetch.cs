@@ -1,5 +1,7 @@
 using DBControl;
 using System.Data;
+using System;
+using System.Collections.Generic;
 
 namespace Lib;
 
@@ -26,23 +28,11 @@ public class DrawDataFetch
                 }
                 catch(Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    // Console.WriteLine(ex.Message);
                     ShortResult[int.Parse(dayNr)] += 1;
                 }
             }
         }
-
-        // if (SelectResults.Rows.Count != 0)
-        // {
-        //     for (int rows = 0; rows < SelectResults.Rows.Count; rows++)
-        //     {
-        //         for (int column = 0; column < SelectResults.Columns.Count; column++)
-        //         {
-        //             Write($"{SelectResults.Rows[rows].ItemArray[column]}  ");
-        //         }
-        //         WriteLine();
-        //     }
-        // }
 
         sqlite_conn.Close();
 

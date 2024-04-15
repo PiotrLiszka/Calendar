@@ -1,5 +1,6 @@
 ﻿namespace Lib;
 using System;
+using System.IO;
 
 
 public class FileCheck : IDisposable
