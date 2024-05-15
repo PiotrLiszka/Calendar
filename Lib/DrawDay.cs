@@ -6,29 +6,32 @@ namespace Lib;
 public class DrawDay : CalendarDraw
 {
 
-    public DrawDay()
+    // TODO: CAŁA KLASA!!
+
+    public DrawDay(DateTime requestedDate)
     {
-        controlKeys = [ConsoleKey.LeftArrow, ConsoleKey.RightArrow, ConsoleKey.A, ConsoleKey.Escape];
+        RequestedDate = requestedDate;
+        controlKeys = [ConsoleKey.A, ConsoleKey.Escape];
         ListOfKeys.AddRange(controlKeys);
     }
     public override void OnKeyPressed(object source, KeyControlsEventArgs e)
     {
+
         switch (e.PressedKey.key.Key)
         {
-            case ConsoleKey.LeftArrow:
-                RequestedDate = RequestedDate.AddDays(-1);
-                Draw();
+            case ConsoleKey.A:
+                //  TODO (dodawanie zdarzenia)
                 break;
-            case ConsoleKey.RightArrow:
-                RequestedDate = RequestedDate.AddDays(1);
-                Draw();
+            case ConsoleKey.Escape:
+                // TODO (powrót do kalendarza)
                 break;
             default:
                 break;
         }
+
     }
 
-    protected override void DrawHeader()
+    protected override void DrawHeader()    // OK
     {
         WriteLine($"{"",-37}{RequestedDate:dd}  {RequestedDate:MMMM}  {RequestedDate:yyyy}");
         WriteLine(floor);
@@ -37,6 +40,11 @@ public class DrawDay : CalendarDraw
     public override void Draw()
     {
         throw new NotImplementedException();
+    }
+
+    protected override void OnCalendarDrawn(CalendarDraw calendar)
+    {
+        base.OnCalendarDrawn(this);
     }
 
 }

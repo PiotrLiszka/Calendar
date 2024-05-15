@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Lib;
 
-public class DrawEventArgs : EventArgs
+public class DrawEventArgs
 {
     public CalendarDraw? KeyEvents { get; set; }
 }
@@ -26,9 +26,11 @@ public abstract class CalendarDraw : DrawDataFetch
     protected abstract void DrawHeader();
     protected virtual void DrawBasicControls()
     {
-        System.Console.Write("[Q] Skróty klawiszowe\t [ESC] Wyjdź/Powrót");
+        System.Console.Write("[Q] Skróty klawiszowe\t [ESC] Powrót");
     }
-    
+
+    // TODO: oprócz DrawDay stworzyć klasę wypisującą wszystkie zdarzenia z miesiąca bez potrzeby wyboru dnia... 
+    // TODO: klasa/metoda umożliwiająca edycje wydarzeń   
     protected virtual void OnCalendarDrawn(CalendarDraw calendar)
     {
         CalendarDrawn?.Invoke(this, new DrawEventArgs(){KeyEvents = calendar});

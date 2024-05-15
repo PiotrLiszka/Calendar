@@ -1,27 +1,29 @@
 ﻿using System;
 using System.Data;
 using System.Data.SQLite;
+using System.IO;
 using static System.Console;
 namespace DBControl;
 
 public class DBControlClass
 {
 
-   private static void Test ()
+   public static void Test () // wypełnianie miesiąca eventami
    {
       var sqlite_conn = CreateConnection();
-      DBControlClass.AddToDB(new DateTime(2024, 04, 15, 13, 22, 11), "Mama miała placek", 3,sqlite_conn);        // TESTING
-      DBControlClass.AddToDB(new DateTime(2024, 04, 17, 14, 22, 11), "Mama miała placek2", 1,sqlite_conn); 
-      DBControlClass.AddToDB(new DateTime(2024, 04, 02, 15, 22, 11), "Mama miała placek3", 2,sqlite_conn);
-      DBControlClass.AddToDB(new DateTime(2024, 04, 02, 15, 22, 11), "Mama miała placek3", 2,sqlite_conn);
-      DBControlClass.AddToDB(new DateTime(2024, 04, 07, 15, 22, 11), "Mama miała placek3", 2,sqlite_conn);
+
+      for (int i = 1; i < 28; i++)
+      {
+         DBControlClass.AddToDB(new DateTime(2024, 05, i, 13, 22, 11), $"Test event nr {i}", 1,sqlite_conn);
+      }
    }
 
    public static SQLiteConnection CreateConnection()
    {
-      // TODO : folder do zmiany na %Documents
-      // aktualnie wychodzi z foleru bin do głównego folderu projektu
-      var sqlite_conn = new SQLiteConnection("Data Source=../../../../DB/calendar.db;");
+      // var sqlite_conn = new SQLiteConnection("Data Source=../../../../DB/calendar.db;");
+      char sep = Path.DirectorySeparatorChar;
+      var sqlite_conn = new SQLiteConnection($"Data Source =" + 
+         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), $"VS Projects{sep}Calendar{sep}DB{sep}calendar.db"));
       try
       {
          sqlite_conn.Open();  // jeśli nie ma pliku bazy to tworzy ją automatycznie

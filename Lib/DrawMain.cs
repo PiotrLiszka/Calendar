@@ -7,24 +7,24 @@ namespace Lib;
 public class DrawMain : CalendarDraw
 {
     private State state = new State();
-
-    public DrawMain(DateTime requestedDate)   
+    // !!! TODO: Odpalanie klasy z użyciem dzisiejszego dnia, przekopiowanie wyliczania piewszego dnia z Program.cs
+    public DrawMain(DateTime requestedDate)   // TODO: Implementacja dodawania i wyświetlania zdarzeń
     {
-        controlKeys = [ConsoleKey.Q, ConsoleKey.LeftArrow, ConsoleKey.RightArrow, ConsoleKey.A, ConsoleKey.Escape];
+        controlKeys = [ConsoleKey.Q, ConsoleKey.LeftArrow, ConsoleKey.RightArrow, ConsoleKey.A, ConsoleKey.P, ConsoleKey.Escape];
         RequestedDate = requestedDate;
         ListOfKeys.AddRange(controlKeys);
-        state = State.MainCalendar;
+        state = State.MainView;
     }
 
     private enum State
     {
-        MainCalendar,
+        MainView,
         ControlView
     }
 
     public override void OnKeyPressed(object source, KeyControlsEventArgs e)
     {
-        if (state == State.MainCalendar)
+        if (state == State.MainView)
         {
             switch (e.PressedKey.key.Key)
             {
@@ -53,7 +53,7 @@ public class DrawMain : CalendarDraw
             switch (e.PressedKey.key.Key)
             {
                 case ConsoleKey.Escape:
-                    state = State.MainCalendar;
+                    state = State.MainView;
                     Draw();
                     break;
                 default:
@@ -63,6 +63,10 @@ public class DrawMain : CalendarDraw
         }
     }
 
+    protected override void DrawBasicControls()
+    {
+        System.Console.Write("[Q] Skróty klawiszowe\t [ESC] Wyjście");
+    }
     private void DrawControls()
     {
         Console.Clear();
