@@ -4,3 +4,5 @@ PLAN.odt
 Calendar.code-workspace
 DB/calendar.sql
 *.sln
+.vs
+*copy.cs

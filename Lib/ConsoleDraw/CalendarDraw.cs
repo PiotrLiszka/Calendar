@@ -1,29 +1,29 @@
-using System; 
+using System;
 using System.Collections.Generic;
 
-namespace Lib;
+namespace Lib.ConsoleDraw;
 
-public class DrawEventArgs
-{
-    public CalendarDraw? KeyEvents { get; set; }
-}
-
-public abstract class CalendarDraw : DrawDataFetch
+public abstract class CalendarDraw
 {
     protected DateTime RequestedDate { get; set; }
     protected ConsoleKey[]? controlKeys;
     protected readonly string floor = "__________________________________________________________________________________________________";
 
-    internal List<ConsoleKey> ListOfKeys { get; set; } = new List<ConsoleKey>();
+    internal List<ConsoleKey> BaseKeys = [ConsoleKey.Q, ConsoleKey.Escape];
+    internal List<ConsoleKey> ListOfKeys = new List<ConsoleKey>();
+    protected State state = new();
+    protected enum State
+    {
+        MainView,
+        ControlView,
+        EventsView 
+    }
+    
 
-    //  Eventy odpowiadające za przekazanie odpowiednich klawiszy do klasy KeyControls
-    public delegate void DrawEventHandler(object sender, DrawEventArgs e);
-    public event DrawEventHandler? CalendarDrawn;
-
-    public abstract void OnKeyPressed(object source, KeyControlsEventArgs e);
-
+    public abstract void OnKeyPressed();
     public abstract void Draw();
     protected abstract void DrawHeader();
+    protected abstract void DrawControls();
     protected virtual void DrawBasicControls()
     {
         System.Console.Write("[Q] Skróty klawiszowe\t [ESC] Powrót");
@@ -33,6 +33,6 @@ public abstract class CalendarDraw : DrawDataFetch
     // TODO: klasa/metoda umożliwiająca edycje wydarzeń   
     protected virtual void OnCalendarDrawn(CalendarDraw calendar)
     {
-        CalendarDrawn?.Invoke(this, new DrawEventArgs(){KeyEvents = calendar});
+        KeyControls.OnCalendarDrawn(calendar);
     }
 }

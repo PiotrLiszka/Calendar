@@ -1,35 +1,27 @@
-using System; 
+using System;
+using Lib.ConsoleDraw;
+
 namespace Lib;
 
-public class KeyControlsEventArgs : EventArgs
+public static class KeyControls
 {
-    internal KeyControls? PressedKey { get; set; }
-}
+    public static ConsoleKeyInfo PressedKey { get; set; }
 
-public class KeyControls
-{
-    public DateTime ViewerDate { get; set; }
-    internal ConsoleKeyInfo key;
-
-    public event EventHandler<KeyControlsEventArgs>? KeyPressed;
-    public void OnCalendarDrawn(object source, DrawEventArgs e)
+    public static void OnCalendarDrawn(CalendarDraw source)
     {
 
         Console.TreatControlCAsInput = true;
         // System.Console.WriteLine("Czekam na przycisk...");
         do
         {
-            key = Console.ReadKey(true);
+            PressedKey = Console.ReadKey(true);
             // System.Console.WriteLine($"{key.Modifiers} + {key.Key}");
         }
-        while (!e.KeyEvents.ListOfKeys.Contains(key.Key));
+        while (!source.ListOfKeys.Contains(PressedKey.Key) && !source.BaseKeys.Contains(PressedKey.Key));
 
-        OnKeyPressed();
+        source.OnKeyPressed();
+
     }
 
-    protected virtual void OnKeyPressed()
-    {
-        KeyPressed?.Invoke(this, new KeyControlsEventArgs() { PressedKey = this });
-    }
 
 }

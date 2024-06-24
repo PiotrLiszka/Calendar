@@ -5,7 +5,7 @@ using System.IO;
 using static System.Console;
 namespace DBControl;
 
-public class DBControlClass
+public class DBQueries
 {
 
    public static void Test () // wypełnianie miesiąca eventami
@@ -14,7 +14,7 @@ public class DBControlClass
 
       for (int i = 1; i < 28; i++)
       {
-         DBControlClass.AddToDB(new DateTime(2024, 05, i, 13, 22, 11), $"Test event nr {i}", 1,sqlite_conn);
+         DBQueries.AddToDB(new DateTime(2024, 05, i, 13, 22, 11), $"Test event nr {i}", 1,sqlite_conn);
       }
    }
 
@@ -127,7 +127,12 @@ public class DBControlClass
         return GetSelectResults(sqlite_conn, selectQuery);
 
     }
-
+   /// <summary>
+   /// Zbiera rezultaty kwerend SELECT w tablicy
+   /// </summary>
+   /// <param name="sqlite_conn">Połączenie sqlite</param>
+   /// <param name="selectQuery">Kwerenda do wykonania i przechowania</param>
+   /// <returns>Tablica wyników kwerendy selectQuery</returns>
     private static DataTable GetSelectResults(SQLiteConnection sqlite_conn, string selectQuery)
     {
         DataTable results = new();

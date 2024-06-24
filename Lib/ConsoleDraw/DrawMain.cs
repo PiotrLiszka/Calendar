@@ -2,31 +2,26 @@ using System;
 using System.Collections.Generic;
 using static System.Console;
 using static System.Threading.Thread;
-namespace Lib;
+using DBControl;
+
+namespace Lib.ConsoleDraw;
 
 public class DrawMain : CalendarDraw
 {
-    private State state = new State();
     // !!! TODO: Odpalanie klasy z użyciem dzisiejszego dnia, przekopiowanie wyliczania piewszego dnia z Program.cs
     public DrawMain(DateTime requestedDate)   // TODO: Implementacja dodawania i wyświetlania zdarzeń
     {
-        controlKeys = [ConsoleKey.Q, ConsoleKey.LeftArrow, ConsoleKey.RightArrow, ConsoleKey.A, ConsoleKey.P, ConsoleKey.Escape];
+        controlKeys = [ConsoleKey.LeftArrow, ConsoleKey.RightArrow, ConsoleKey.A, ConsoleKey.P, ConsoleKey.D];
         RequestedDate = requestedDate;
         ListOfKeys.AddRange(controlKeys);
         state = State.MainView;
     }
 
-    private enum State
-    {
-        MainView,
-        ControlView
-    }
-
-    public override void OnKeyPressed(object source, KeyControlsEventArgs e)
+    public override void OnKeyPressed()
     {
         if (state == State.MainView)
         {
-            switch (e.PressedKey.key.Key)
+            switch (KeyControls.PressedKey.Key)
             {
                 case ConsoleKey.LeftArrow:
                     RequestedDate = RequestedDate.AddMonths(-1);
@@ -36,28 +31,32 @@ public class DrawMain : CalendarDraw
                     RequestedDate = RequestedDate.AddMonths(1);
                     Draw();
                     break;
-                case ConsoleKey.A:
-                    break;
+
                 case ConsoleKey.Escape:
                     break;
                 case ConsoleKey.Q:
                     state = State.ControlView;
                     DrawControls();
                     break;
+                case ConsoleKey.A:
+                // break;
+                case ConsoleKey.D:
+                // break;
                 default:
+                    Draw();
                     break;
             }
         }
-        else if (state == State.ControlView)
+        else if (state == State.ControlView || state == State.EventsView)
         {
-            switch (e.PressedKey.key.Key)
+            switch (KeyControls.PressedKey.Key)
             {
                 case ConsoleKey.Escape:
                     state = State.MainView;
                     Draw();
                     break;
                 default:
-                    OnCalendarDrawn(this);
+                    base.OnCalendarDrawn(this);
                     break;
             }
         }
@@ -67,28 +66,29 @@ public class DrawMain : CalendarDraw
     {
         System.Console.Write("[Q] Skróty klawiszowe\t [ESC] Wyjście");
     }
-    private void DrawControls()
+    protected override void DrawControls()
     {
         Console.Clear();
-        System.Console.WriteLine("[<-]\t\tPoprzedni miesiąc\n\n[->]\t\tNastępny miesiąc\n\n[A]\t\tDodaj wydarzenie\n\n[P]\t\tPokaż wydarzenia");
+        DrawControls controls = new DrawControls(ListOfKeys, this);
         System.Console.WriteLine("\n\n\n\n\n\n[ESC]\tWróć do kalendarza");
-        OnCalendarDrawn(this);
+        base.OnCalendarDrawn(this);
     }
     /// <summary>
     /// Rysuje puste pole w kalendarzu
     /// </summary>
     private static void DrawEmpty()
     {
+        string empty = $"|{"",-13}";
         Console.ForegroundColor = ConsoleColor.White;
         (int Left, int Top) = Console.GetCursorPosition();
-        Write($"|{"",-13}");
+        Write(empty);
         Console.SetCursorPosition(Left, Top + 1);
-        Write($"|{"",-13}");
+        Write(empty);
         Console.SetCursorPosition(Left, Top + 2);
-        Write($"|{"",-13}");
+        Write(empty);
         Console.SetCursorPosition(Left + 14, Top);
     }
-    
+
     /// <summary>
     /// Rysuje prawą krawędź kalendarza i "podłogę"
     /// </summary>
@@ -116,7 +116,7 @@ public class DrawMain : CalendarDraw
     /// </summary>
     public override void Draw()     // jest dramatyczna, ale działa dobrze...
     {
-        Dictionary<int,int> monthData = DataForMonth(RequestedDate);   // słownik z danymi dla miesiąca
+        Dictionary<int, int> monthData = DataFetch.DataForMonth(RequestedDate);   // słownik z danymi dla miesiąca
         Sleep(10);
         string[] days = ["Pon", "Wto", "Śro", "Czw", "Pią", "Sob", "Ndz"];
         Console.Clear();
@@ -132,7 +132,7 @@ public class DrawMain : CalendarDraw
         }
         WriteLine();                        //  koniec 1 wiersza
         WriteLine(floor);
-        
+
         byte dayNr = 1;
         byte dayFields = 35;
         byte firstDay = (byte)RequestedDate.DayOfWeek;
@@ -173,7 +173,7 @@ public class DrawMain : CalendarDraw
                     Console.ForegroundColor = ConsoleColor.White;
                     Write($"|{"",-13}");
                 }
-                
+
                 Console.SetCursorPosition(Left + 14, Top);
                 dayNr++;
             }
@@ -187,14 +187,9 @@ public class DrawMain : CalendarDraw
                 DrawEndOfWeek();
             }
         }
-
         DrawBasicControls();
 
-        
-        OnCalendarDrawn(this);
-    }
-    protected override void OnCalendarDrawn(CalendarDraw calendar)
-    {
         base.OnCalendarDrawn(this);
     }
+
 }
