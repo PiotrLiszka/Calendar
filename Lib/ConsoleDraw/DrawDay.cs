@@ -8,12 +8,13 @@ namespace Lib.ConsoleDraw;
 public class DrawDay : CalendarDraw
 {
 
-    // TODO: CAŁA KLASA!!
+    // TODO: zmienić z drawday na drawevents
+    //  w zależności od wartości przekazanej w konstruktorze, wypisywać eventy dla dnia albo całego miesiąca
 
     public DrawDay(DateTime requestedDate)
     {
         RequestedDate = requestedDate;
-        controlKeys = [ConsoleKey.A, ConsoleKey.P];
+        controlKeys = [ConsoleKey.LeftArrow, ConsoleKey.RightArrow, ConsoleKey.A, ConsoleKey.P];
         ListOfKeys.AddRange(controlKeys);
         state = State.MainView;
     }
@@ -23,6 +24,14 @@ public class DrawDay : CalendarDraw
         {
             switch (KeyControls.PressedKey.Key)
             {
+                case ConsoleKey.LeftArrow:
+                    RequestedDate = RequestedDate.AddDays(-1);
+                    Draw();
+                    break;
+                case ConsoleKey.RightArrow:
+                    RequestedDate = RequestedDate.AddDays(1);
+                    Draw();
+                    break;
                 // case ConsoleKey.A:
                 //     //  TODO (dodawanie zdarzenia)
                 //     break;
@@ -31,15 +40,14 @@ public class DrawDay : CalendarDraw
                     DrawControls();
                     break;
                 case ConsoleKey.Escape:
-                    // WriteLine("Bugged");
-                    // TODO (powrót do kalendarza)
-                    // break;
+                    state = State.MainView;
+                    return;
                 default:
                     Draw();
                     break;
             }
         }
-        else 
+        else
         {
             switch (KeyControls.PressedKey.Key)
             {
@@ -58,14 +66,15 @@ public class DrawDay : CalendarDraw
     protected override void DrawHeader()    // OK
     {
         WriteLine($"{"",-37}{RequestedDate:dd}  {RequestedDate:MMMM}  {RequestedDate:yyyy}");
-        WriteLine(floor+"\n");
+        WriteLine(floor + "\n");
     }
 
     protected override void DrawControls()
     {
         Console.Clear();
         DrawControls controls = new DrawControls(ListOfKeys, this);
-        System.Console.WriteLine("\n\n\n\n\n\n[ESC]\tWróć do kalendarza");
+        controls.Draw();
+        WriteLine("\n\n\n\n\n\n[ESC]\tWróć do kalendarza");
         OnCalendarDrawn(this);
     }
 
@@ -81,7 +90,7 @@ public class DrawDay : CalendarDraw
                 DataRow results = SelectResults.Rows[row];
                 TimeOnly time = TimeOnly.FromDateTime(DateTime.Parse(results.ItemArray[2].ToString()));    // zmiana wartości z SQLite (string) na TimeOnly
                 Write($"{time}\t{results.ItemArray[3]}\t{results.ItemArray[4]}");               // wypisywanie danych : czas, tekst wydarzenia[3] i priorytet[4]
-                                
+
                 WriteLine();
             }
         }
@@ -102,7 +111,7 @@ public class DrawDay : CalendarDraw
         DrawBasicControls();
 
         base.OnCalendarDrawn(this);
-        ReadLine();
+        //ReadLine();
     }
 
 }

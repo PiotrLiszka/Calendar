@@ -7,7 +7,7 @@ public abstract class CalendarDraw
 {
     protected DateTime RequestedDate { get; set; }
     protected ConsoleKey[]? controlKeys;
-    protected readonly string floor = "__________________________________________________________________________________________________";
+    protected const string floor = "__________________________________________________________________________________________________";
 
     internal List<ConsoleKey> BaseKeys = [ConsoleKey.Q, ConsoleKey.Escape];
     internal List<ConsoleKey> ListOfKeys = new List<ConsoleKey>();
@@ -16,7 +16,7 @@ public abstract class CalendarDraw
     {
         MainView,
         ControlView,
-        EventsView 
+        OtherViews 
     }
     
 

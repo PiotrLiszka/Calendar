@@ -12,7 +12,6 @@ public class DrawControls
     public DrawControls(List<ConsoleKey> key, CalendarDraw source)
     {
         keys = key;
-        ControlInformationInit();
 
         prevNext = source.GetType().Name switch
         {
@@ -21,6 +20,11 @@ public class DrawControls
             _ => "",
         };
 
+        ControlInformationInit();
+    }
+
+    public void Draw()
+    {
         foreach (ConsoleKey keyItem in keys)
         {
             try

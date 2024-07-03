@@ -1,20 +1,25 @@
 using System;
+using System.Text;
 using System.Collections.Generic;
+
 using static System.Console;
 using static System.Threading.Thread;
+
 using DBControl;
 
 namespace Lib.ConsoleDraw;
 
 public class DrawMain : CalendarDraw
 {
-    // !!! TODO: Odpalanie klasy z użyciem dzisiejszego dnia, przekopiowanie wyliczania piewszego dnia z Program.cs
+    public bool appRunning;
+
     public DrawMain(DateTime requestedDate)   // TODO: Implementacja dodawania i wyświetlania zdarzeń
     {
         controlKeys = [ConsoleKey.LeftArrow, ConsoleKey.RightArrow, ConsoleKey.A, ConsoleKey.P, ConsoleKey.D];
         RequestedDate = requestedDate;
         ListOfKeys.AddRange(controlKeys);
         state = State.MainView;
+        appRunning = true;
     }
 
     public override void OnKeyPressed()
@@ -26,37 +31,42 @@ public class DrawMain : CalendarDraw
                 case ConsoleKey.LeftArrow:
                     RequestedDate = RequestedDate.AddMonths(-1);
                     Draw();
-                    break;
+                    return;
                 case ConsoleKey.RightArrow:
                     RequestedDate = RequestedDate.AddMonths(1);
                     Draw();
-                    break;
-
+                    return;
                 case ConsoleKey.Escape:
-                    break;
+                    appRunning = false;
+                    return;
                 case ConsoleKey.Q:
                     state = State.ControlView;
                     DrawControls();
-                    break;
+                    return;
                 case ConsoleKey.A:
                 // break;
                 case ConsoleKey.D:
-                // break;
+                    state = State.OtherViews;
+                    // DayChoice();
+                    DrawDay drawDay = new(RequestedDate.AddDays(DayChoice() - 1));
+                    drawDay.Draw();
+                    state = State.MainView;
+                    break;
                 default:
-                    Draw();
+                    // Draw();
                     break;
             }
         }
-        else if (state == State.ControlView || state == State.EventsView)
+        else if (state == State.ControlView || state == State.OtherViews)
         {
             switch (KeyControls.PressedKey.Key)
             {
                 case ConsoleKey.Escape:
                     state = State.MainView;
-                    Draw();
-                    break;
+                    // Draw();
+                    return;
                 default:
-                    base.OnCalendarDrawn(this);
+                    // base.OnCalendarDrawn(this);
                     break;
             }
         }
@@ -70,6 +80,7 @@ public class DrawMain : CalendarDraw
     {
         Console.Clear();
         DrawControls controls = new DrawControls(ListOfKeys, this);
+        controls.Draw();
         System.Console.WriteLine("\n\n\n\n\n\n[ESC]\tWróć do kalendarza");
         base.OnCalendarDrawn(this);
     }
@@ -192,4 +203,53 @@ public class DrawMain : CalendarDraw
         base.OnCalendarDrawn(this);
     }
 
+    /// <summary>
+    /// Metoda pozwalająca użytkownikowi wybór dnia do wyświetlenia
+    /// </summary>
+    /// <returns>Wybrany dzień do wyświetlenia</returns>
+    public int DayChoice()
+    {
+        DateTime dateTime = DateTime.Now;
+        int daysInMyMonth = DateTime.DaysInMonth(dateTime.Year, dateTime.Month);
+        StringBuilder dayString = new();
+        ConsoleKeyInfo keyCheck;
+        bool input = false;
+        int day;
+
+        Console.Clear();
+        DrawHeader();
+
+        do
+        {
+            WriteLine($"Wybierz dzień z tego miesiąca do wyświetlenia (1-{daysInMyMonth}): ");
+            do
+            {
+                keyCheck = ReadKey(false);
+                dayString.Append(keyCheck.KeyChar);
+            }
+            while (keyCheck.Key != ConsoleKey.Enter);
+
+            WriteLine(dayString.ToString());
+            if (int.TryParse(dayString.ToString(), out day))
+            {
+                if (day > 0 && day <= daysInMyMonth)
+                {
+                    input = true;
+                }
+                else
+                {
+                    WriteLine("\nDzień spoza zakresu!");
+                    dayString.Clear();
+                }
+            }
+            else
+            {
+                WriteLine("\nWprowadzono błędne dane!");
+                dayString.Clear();
+            }
+        }
+        while (!input);
+
+        return day; // do sprawdzenia
+    }
 }
